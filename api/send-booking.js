@@ -4,15 +4,13 @@ const app = express();
 
 app.use(express.json());
 
-// Flexible CORS middleware with logging
+// Simplified CORS middleware with logging
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     console.log('Request Method:', req.method, 'Received Origin:', origin, 'URL:', req.url);
     if (origin && origin.includes('studio-neha-frontend-sahil-rupesh-surves-projects.vercel.app')) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         console.log('CORS Allowed for Origin:', origin);
-    } else {
-        console.log('CORS Not Allowed for Origin:', origin);
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
