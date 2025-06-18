@@ -4,13 +4,15 @@ const app = express();
 
 app.use(express.json());
 
-// Simplified CORS middleware with logging
+// Broadened CORS middleware with logging
 app.use((req, res, next) => {
     const origin = req.headers.origin;
     console.log('Request Method:', req.method, 'Received Origin:', origin, 'URL:', req.url);
-    if (origin && origin.includes('studio-neha-frontend-sahil-rupesh-surves-projects.vercel.app')) {
+    if (origin && origin.includes('studio-neha-frontend')) {
         res.setHeader('Access-Control-Allow-Origin', origin);
         console.log('CORS Allowed for Origin:', origin);
+    } else {
+        console.log('CORS Not Allowed for Origin:', origin);
     }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
@@ -54,23 +56,4 @@ app.post('/api/send-booking', async (req, res) => {
             <p><strong>Date:</strong> ${date}</p>
             <p><strong>Time:</strong> ${time}</p>
             <p><strong>Additional Details:</strong> ${details || 'None'}</p>
-            <p style="color: #4b5563;">Thank you for choosing Studio Neha Beauty! Please confirm the appointment with the client.</p>
-        `
-    };
-
-    try {
-        console.log('Sending email...');
-        await transporter.sendMail(mailOptions);
-        console.log('Email sent successfully');
-        res.status(200).json({ success: true, message: 'Booking request sent successfully' });
-    } catch (error) {
-        console.error('Error sending email:', error);
-        res.status(500).json({ success: false, error: 'Failed to send email' });
-    }
-});
-
-app.all('*', (req, res) => {
-    res.status(405).json({ success: false, error: 'Method not allowed' });
-});
-
-module.exports = app;
+            <p style="color:
