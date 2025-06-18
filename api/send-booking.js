@@ -2,16 +2,24 @@ const express = require('express');
 const nodemailer = require('nodemailer');
 const app = express();
 
-app.use(express.json()); // Parse JSON bodies
+app.use(express.json());
 
-// CORS headers
+// Flexible CORS middleware with logging
 app.use((req, res, next) => {
-    res.setHeader('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
+    const origin = req.headers.origin;
+    console.log('Request Method:', req.method, 'Received Origin:', origin, 'URL:', req.url);
+    if (origin && origin.includes('studio-neha-frontend-sahil-rupesh-surves-projects.vercel.app')) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        console.log('CORS Allowed for Origin:', origin);
+    } else {
+        console.log('CORS Not Allowed for Origin:', origin);
+    }
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     res.setHeader('Access-Control-Max-Age', '86400');
     if (req.method === 'OPTIONS') {
-        return res.status(204).end(); // No content for OPTIONS
+        console.log('OPTIONS Request handled with 204');
+        return res.status(204).end();
     }
     next();
 });
@@ -19,6 +27,7 @@ app.use((req, res, next) => {
 app.post('/api/send-booking', async (req, res) => {
     const { name, service, date, time, details } = req.body;
 
+    console.log('POST Request Body:', req.body);
     if (!name || !service || !date || !time) {
         return res.status(400).json({ success: false, error: 'All required fields must be provided' });
     }
