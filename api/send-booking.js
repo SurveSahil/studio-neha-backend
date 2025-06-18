@@ -1,18 +1,14 @@
 const nodemailer = require('nodemailer');
 
-// Handle the request
 module.exports = async (req, res) => {
-  // Set CORS headers
-  res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend-87kp2wed8-sahil-rupesh-surves-projects.vercel.app');
+  res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
   res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
-  // Handle preflight OPTIONS request
   if (req.method === 'OPTIONS') {
     return res.status(200).send();
   }
 
-  // Proceed only for POST requests
   if (req.method !== 'POST') {
     return res.status(405).json({ success: false, error: 'Method not allowed' });
   }
