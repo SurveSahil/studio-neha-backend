@@ -4,18 +4,23 @@ const cors = require('cors');
 
 const app = express();
 
-// Configure CORS to allow your frontend origin and handle preflight
+// Configure CORS to allow the frontend origin and handle preflight
 app.use(cors({
-  origin: 'https://studio-neha-frontend.vercel.app/', // Replace with your actual frontend URL (e.g., https://your-site-name.netlify.app)
-  methods: ['GET', 'POST', 'OPTIONS'], // Allow OPTIONS for preflight
+  origin: 'https://studio-neha-frontend.vercel.app', // Matches your frontend URL
+  methods: ['GET', 'POST', 'OPTIONS'], // Explicitly allow OPTIONS
   allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
-  credentials: true // Optional: if using cookies/auth
+  credentials: true // Optional, if using cookies/auth
 }));
 
 app.use(express.json());
 
-// Handle preflight OPTIONS request explicitly
-app.options('/api/send-booking', cors()); // Ensure OPTIONS is allowed for this endpoint
+// Explicitly handle OPTIONS preflight request
+app.options('/api/send-booking', (req, res) => {
+  res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend.vercel.app');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.status(200).send(); // Respond with 200 OK for preflight
+});
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
@@ -55,9 +60,11 @@ module.exports = async (req, res) => {
 
   try {
     await transporter.sendMail(mailOptions);
+    res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend.vercel.app'); // Set CORS for response
     res.status(200).json({ success: true, message: 'Booking request sent successfully' });
   } catch (error) {
     console.error('Error sending email:', error);
+    res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend.vercel.app'); // Set CORS for error response
     res.status(500).json({ success: false, error: 'Failed to send email' });
   }
 };
