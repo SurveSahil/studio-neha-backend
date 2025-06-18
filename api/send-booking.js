@@ -56,4 +56,28 @@ app.post('/api/send-booking', async (req, res) => {
             <p><strong>Date:</strong> ${date}</p>
             <p><strong>Time:</strong> ${time}</p>
             <p><strong>Additional Details:</strong> ${details || 'None'}</p>
-            <p style="color:
+            <p style="color: #4b5563;">Thank you for choosing Studio Neha Beauty! Please confirm the appointment with the client.</p>
+        `
+    };
+
+    try {
+        console.log('Sending email...');
+        await transporter.sendMail(mailOptions);
+        console.log('Email sent successfully');
+        // Explicitly set CORS header in the response
+        const origin = req.headers.origin;
+        if (origin && origin.includes('studio-neha-frontend')) {
+            res.setHeader('Access-Control-Allow-Origin', origin);
+        }
+        res.status(200).json({ success: true, message: 'Booking request sent successfully' });
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({ success: false, error: 'Failed to send email' });
+    }
+});
+
+app.all('*', (req, res) => {
+    res.status(405).json({ success: false, error: 'Method not allowed' });
+});
+
+module.exports = app;
