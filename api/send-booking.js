@@ -1,21 +1,21 @@
 const nodemailer = require('nodemailer');
 
 module.exports = async (req, res) => {
-  // Manually parse JSON body (Vercel serverless requires this)
+  res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
+  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.set('Access-Control-Max-Age', '86400');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(204).send();
+  }
+
   let body = '';
   req.on('data', chunk => {
     body += chunk.toString();
   });
   req.on('end', async () => {
     const { name, service, date, time, details } = body ? JSON.parse(body) : {};
-
-    res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
-    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-    if (req.method === 'OPTIONS') {
-      return res.status(200).send();
-    }
 
     if (req.method !== 'POST') {
       return res.status(405).json({ success: false, error: 'Method not allowed' });
@@ -25,15 +25,18 @@ module.exports = async (req, res) => {
       return res.status(400).json({ success: false, error: 'All required fields must be provided' });
     }
 
+    console.log('Starting email process'); // Early log
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'nehamakeup01@gmail.com',
         pass: process.env.EMAIL_PASS
-      }
+      },
+      connectionTimeout: 10000, // 10 seconds
+      timeout: 20000 // 20 seconds
     });
 
-    console.log('EMAIL_PASS:', process.env.EMAIL_PASS);
+    console.log('Transporter created, EMAIL_PASS:', process.env.EMAIL_PASS);
 
     const mailOptions = {
       from: 'Studio Neha Beauty <nehamakeup01@gmail.com>',
@@ -51,7 +54,9 @@ module.exports = async (req, res) => {
     };
 
     try {
+      console.log('Sending email...');
       await transporter.sendMail(mailOptions);
+      console.log('Email sent successfully');
       res.status(200).json({ success: true, message: 'Booking request sent successfully' });
     } catch (error) {
       console.error('Error sending email:', error);
