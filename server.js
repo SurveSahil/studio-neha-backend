@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
   }
 });
 
-app.post('/send-booking', async (req, res) => {
+app.post('/api/send-booking', async (req, res) => {
   const { name, service, date, time, details } = req.body;
 
   if (!name || !service || !date || !time) {
@@ -46,5 +46,5 @@ app.post('/send-booking', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+// Export for Vercel serverless
+module.exports = app;
