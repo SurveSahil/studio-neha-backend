@@ -3,8 +3,19 @@ const nodemailer = require('nodemailer');
 const cors = require('cors');
 
 const app = express();
-app.use(cors());
+
+// Configure CORS to allow your frontend origin and handle preflight
+app.use(cors({
+  origin: 'https://studio-neha-frontend.vercel.app/', // Replace with your actual frontend URL (e.g., https://your-site-name.netlify.app)
+  methods: ['GET', 'POST', 'OPTIONS'], // Allow OPTIONS for preflight
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow necessary headers
+  credentials: true // Optional: if using cookies/auth
+}));
+
 app.use(express.json());
+
+// Handle preflight OPTIONS request explicitly
+app.options('/api/send-booking', cors()); // Ensure OPTIONS is allowed for this endpoint
 
 // Configure Nodemailer
 const transporter = nodemailer.createTransport({
