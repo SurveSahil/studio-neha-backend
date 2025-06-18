@@ -1,13 +1,14 @@
 const nodemailer = require('nodemailer');
 
 module.exports = async (req, res) => {
-  res.set('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  res.set('Access-Control-Max-Age', '86400');
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Origin', 'https://studio-neha-frontend-cptlhm08f-sahil-rupesh-surves-projects.vercel.app');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
 
   if (req.method === 'OPTIONS') {
-    return res.status(204).send();
+    return res.status(204).end(); // No content for OPTIONS
   }
 
   let body = '';
@@ -25,15 +26,15 @@ module.exports = async (req, res) => {
       return res.status(400).json({ success: false, error: 'All required fields must be provided' });
     }
 
-    console.log('Starting email process'); // Early log
+    console.log('Starting email process');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: 'nehamakeup01@gmail.com',
         pass: process.env.EMAIL_PASS
       },
-      connectionTimeout: 10000, // 10 seconds
-      timeout: 20000 // 20 seconds
+      connectionTimeout: 10000,
+      timeout: 20000
     });
 
     console.log('Transporter created, EMAIL_PASS:', process.env.EMAIL_PASS);
