@@ -4,24 +4,29 @@ const app = express();
 
 app.use(express.json());
 
-// Broadened CORS middleware with logging
+// Place this above your routes, after app.use(express.json())
+const allowedOrigins = [
+  'https://studio-neha-frontend.vercel.app',
+  'https://styledbyneha.vercel.app'
+];
+
 app.use((req, res, next) => {
-    const origin = req.headers.origin;
-    console.log('Request Method:', req.method, 'Received Origin:', origin, 'URL:', req.url);
-    if (origin && origin.includes('studio-neha-frontend')) {
-        res.setHeader('Access-Control-Allow-Origin', origin);
-        console.log('CORS Allowed for Origin:', origin);
-    } else {
-        console.log('CORS Not Allowed for Origin:', origin);
-    }
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.setHeader('Access-Control-Max-Age', '86400');
-    if (req.method === 'OPTIONS') {
-        console.log('OPTIONS Request handled with 204');
-        return res.status(204).end();
-    }
-    next();
+  const origin = req.headers.origin;
+  console.log('Request Method:', req.method, 'Received Origin:', origin, 'URL:', req.url);
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader('Access-Control-Allow-Origin', origin);
+    console.log('CORS Allowed for Origin:', origin);
+  } else {
+    console.log('CORS Not Allowed for Origin:', origin);
+  }
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Access-Control-Max-Age', '86400');
+  if (req.method === 'OPTIONS') {
+    console.log('OPTIONS Request handled with 204');
+    return res.status(204).end();
+  }
+  next();
 });
 
 app.post('/api/send-booking', async (req, res) => {
